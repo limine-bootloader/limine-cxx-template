@@ -6,18 +6,22 @@
 // base revision described by the Limine boot protocol specification.
 // See specification for further info.
 
-static volatile LIMINE_BASE_REVISION(1);
+namespace { volatile LIMINE_BASE_REVISION(1); }
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
 // be made volatile or equivalent, _and_ they should be accessed at least
 // once.
 
-static volatile limine_framebuffer_request framebuffer_request = {
+namespace {
+
+volatile limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0,
-    .response = NULL
+    .response = nullptr
 };
+
+}
 
 // GCC and Clang reserve the right to generate calls to the following
 // 4 functions even if they are not directly called.
@@ -81,11 +85,15 @@ int memcmp(const void *s1, const void *s2, std::size_t n) {
 }
 
 // Halt and catch fire function.
-static void hcf() {
+namespace {
+
+void hcf() {
     asm ("cli");
     for (;;) {
         asm ("hlt");
     }
+}
+
 }
 
 // The following two stubs are required by the Itanium C++ ABI (the one we use,
@@ -116,7 +124,7 @@ extern "C" void _start() {
     }
 
     // Ensure we got a framebuffer.
-    if (framebuffer_request.response == NULL
+    if (framebuffer_request.response == nullptr
      || framebuffer_request.response->framebuffer_count < 1) {
         hcf();
     }
