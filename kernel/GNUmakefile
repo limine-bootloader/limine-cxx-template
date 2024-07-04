@@ -25,10 +25,6 @@ $(eval $(call DEFAULT_VAR,KCXX,$(DEFAULT_KCXX)))
 override DEFAULT_KCC := cc
 $(eval $(call DEFAULT_VAR,KCC,$(DEFAULT_KCC)))
 
-# Same thing for "ld" (the linker).
-override DEFAULT_KLD := ld
-$(eval $(call DEFAULT_VAR,KLD,$(DEFAULT_KLD)))
-
 # User controllable C++ flags.
 override DEFAULT_KCXXFLAGS := -g -O2 -pipe
 $(eval $(call DEFAULT_VAR,KCXXFLAGS,$(DEFAULT_KCXXFLAGS)))
@@ -56,7 +52,6 @@ override SHARED_FLAGS := \
     -ffreestanding \
     -fno-stack-protector \
     -fno-stack-check \
-    -fno-lto \
     -fPIE \
     -m64 \
     -march=x86-64 \
@@ -87,12 +82,13 @@ override KCPPFLAGS := \
 
 # Internal linker flags that should not be changed by the user.
 override KLDFLAGS += \
-    -m elf_x86_64 \
     -nostdlib \
-    -pie \
-    -z text \
-    -z max-page-size=0x1000 \
-    -T linker.ld
+    -Wl,-m,elf_x86_64 \
+    -Wl,-nostdlib \
+    -Wl,-pie \
+    -Wl,-z,text \
+    -Wl,-z,max-page-size=0x1000 \
+    -Wl,-T,linker.ld
 
 # Internal nasm flags that should not be changed by the user.
 override KNASMFLAGS += \
@@ -122,8 +118,8 @@ src/limine.h:
 # See https://sourceware.org/bugzilla/show_bug.cgi?id=31795 for more information.
 bin/$(KERNEL): GNUmakefile linker.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
-	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
-	printf '\003' | dd of=$@ bs=1 count=1 seek=16 conv=notrunc
+	$(KCXX) $(KCXXFLAGS) $(OBJ) $(KLDFLAGS) -o $@
+	printf '\003' | dd of=$@ bs=1 count=1 seek=16 conv=notrunc 2>/dev/null
 
 # Include header dependencies.
 -include $(HEADER_DEPS)
