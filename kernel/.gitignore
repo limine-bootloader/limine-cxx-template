@@ -1,3 +1,6 @@
+/freestanding-cxx-hdrs
+/freestanding-headers
+/src/cc-runtime.c
 /src/limine.h
 /bin
 /obj

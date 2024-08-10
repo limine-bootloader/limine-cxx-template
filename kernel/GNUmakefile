@@ -53,11 +53,14 @@ $(eval $(call DEFAULT_VAR,KLDFLAGS,$(DEFAULT_KLDFLAGS)))
 override SHARED_FLAGS := \
     -Wall \
     -Wextra \
+    -nostdinc \
     -ffreestanding \
     -fno-stack-protector \
     -fno-stack-check \
     -fno-lto \
     -fno-PIC \
+    -ffunction-sections \
+    -fdata-sections \
     -m64 \
     -march=x86-64 \
     -mno-80387 \
@@ -83,6 +86,8 @@ override KCFLAGS += \
 override KCPPFLAGS := \
     -I src \
     $(KCPPFLAGS) \
+    -isystem freestanding-cxx-hdrs \
+    -isystem freestanding-headers \
     -MMD \
     -MP
 
@@ -92,6 +97,7 @@ override KLDFLAGS += \
     -nostdlib \
     -static \
     -z max-page-size=0x1000 \
+    -gc-sections \
     -T linker.ld
 
 # Internal nasm flags that should not be changed by the user.
@@ -108,12 +114,15 @@ override NASMFILES := $(shell cd src && find -L * -type f -name '*.asm')
 override OBJ := $(addprefix obj/,$(CXXFILES:.cpp=.cpp.o) $(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
 override HEADER_DEPS := $(addprefix obj/,$(CXXFILES:.cpp=.cpp.d) $(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 
+# Ensure the dependencies have been obtained.
+override MISSING_DEPS := $(shell if ! test -d freestanding-cxx-hdrs || ! test -d freestanding-headers || ! test -f src/cc-runtime.c || ! test -f src/limine.h; then echo 1; fi)
+ifeq ($(MISSING_DEPS),1)
+    $(error Please run the ./get-deps script first)
+endif
+
 # Default target.
 .PHONY: all
 all: bin/$(KERNEL)
-
-src/limine.h:
-	curl -Lo $@ https://github.com/limine-bootloader/limine/raw/trunk/limine.h
 
 # Link rules for the final kernel executable.
 bin/$(KERNEL): GNUmakefile linker.ld $(OBJ)
@@ -129,7 +138,7 @@ obj/%.cpp.o: src/%.cpp GNUmakefile src/limine.h
 	$(KCXX) $(KCXXFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.c files.
-obj/%.c.o: src/%.c GNUmakefile src/limine.h
+obj/%.c.o: src/%.c GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
@@ -150,4 +159,9 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	rm -f src/limine.h
+	rm -rf freestanding-cxx-hdrs freestanding-headers src/cc-runtime.c src/limine.h
+
+.PHONY: install
+install: all
+	install -d "$(DESTDIR)$(PREFIX)/share/$(KERNEL)"
+	install -m 644 bin/$(KERNEL) "$(DESTDIR)$(PREFIX)/share/$(KERNEL)/"
