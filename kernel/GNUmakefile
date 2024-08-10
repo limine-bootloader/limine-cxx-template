@@ -133,7 +133,7 @@ bin/$(KERNEL): GNUmakefile linker.ld $(OBJ)
 -include $(HEADER_DEPS)
 
 # Compilation rules for *.cpp files.
-obj/%.cpp.o: src/%.cpp GNUmakefile src/limine.h
+obj/%.cpp.o: src/%.cpp GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	$(KCXX) $(KCXXFLAGS) $(KCPPFLAGS) -c $< -o $@
 
