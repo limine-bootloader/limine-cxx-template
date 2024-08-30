@@ -126,10 +126,10 @@ else ifeq ($(KARCH),riscv64)
     ifeq ($(KCXX),clang++)
         override KCXX += \
             -target riscv64-unknown-none
-        override KCFLAGS += \
+        override SHARED_FLAGS += \
             -march=rv64imac
     else
-        override KCFLAGS += \
+        override SHARED_FLAGS += \
             -march=rv64imac_zicsr_zifencei
     endif
     override SHARED_FLAGS += \
