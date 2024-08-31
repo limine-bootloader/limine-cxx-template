@@ -107,14 +107,23 @@ else ifeq ($(KARCH),riscv64)
         override KCC += \
             -target riscv64-unknown-none
     endif
+    ifeq ($(shell $(KCC) --version | grep -i 'clang'),)
+        override KCFLAGS += \
+            -march=rv64imac_zicsr_zifencei
+    else
+        override KCFLAGS += \
+            -march=rv64imac
+    endif
     ifeq ($(KCXX),clang++)
         override KCXX += \
             -target riscv64-unknown-none
-        override SHARED_FLAGS += \
-            -march=rv64imac
-    else
-        override SHARED_FLAGS += \
+    endif
+    ifeq ($(shell $(KCXX) --version | grep -i 'clang'),)
+        override KCXXFLAGS += \
             -march=rv64imac_zicsr_zifencei
+    else
+        override KCXXFLAGS += \
+            -march=rv64imac
     endif
     override SHARED_FLAGS += \
         -mabi=lp64 \
