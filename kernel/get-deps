@@ -58,7 +58,7 @@ if ! test -f version; then
     clone_repo_commit \
         https://github.com/osdev0/freestanding-headers.git \
         freestanding-headers \
-        dd3abd2d7147efc4170dff478d3b7730bed14147
+        4b8b78007533dec6ae3bd8dddcc302f22a21c140
 
     clone_repo_commit \
         https://github.com/osdev0/freestanding-cxx-hdrs.git \
