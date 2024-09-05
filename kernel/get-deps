@@ -58,7 +58,7 @@ if ! test -f version; then
     clone_repo_commit \
         https://github.com/osdev0/libstdcxx-headers.git \
         libstdcxx-headers \
-        87537013811b84111242397cd32a05e6488a2323
+        87af92726532da5c631f21578778c9ef64bef678
 
     download_by_hash \
         https://github.com/osdev0/cc-runtime/raw/dcdf5d82973e77edee597a047a3ef66300903de9/cc-runtime.c \
