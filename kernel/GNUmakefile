@@ -60,9 +60,14 @@ override SHARED_FLAGS := \
 override KCPPFLAGS := \
     -I src \
     $(KCPPFLAGS) \
-    -isystem freestnd-cxx-hdrs/$(KARCH)/include \
+    -isystem freestnd-c-hdrs/$(KARCH)/include \
     -MMD \
     -MP
+
+# Internal C++ only preprocessor flags.
+override KCPPFLAGS_CXX := \
+	$(KCPPFLAGS) \
+	-isystem freestnd-cxx-hdrs/$(KARCH)/include
 
 ifeq ($(KARCH),x86_64)
     # Internal nasm flags that should not be changed by the user.
@@ -190,7 +195,7 @@ endif
 override HEADER_DEPS := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.cpp=.cpp.d) $(ASFILES:.S=.S.d))
 
 # Ensure the dependencies have been obtained.
-override MISSING_DEPS := $(shell if ! test -d freestnd-cxx-hdrs || ! test -f src/cc-runtime.c || ! test -f src/limine.h; then echo 1; fi)
+override MISSING_DEPS := $(shell if ! test -d freestnd-c-hdrs || ! test -d freestnd-cxx-hdrs || ! test -f src/cc-runtime.c || ! test -f src/limine.h; then echo 1; fi)
 ifeq ($(MISSING_DEPS),1)
     $(error Please run the ./get-deps script first)
 endif
@@ -215,7 +220,7 @@ obj-$(KARCH)/%.c.o: src/%.c GNUmakefile
 # Compilation rules for *.cpp files.
 obj-$(KARCH)/%.cpp.o: src/%.cpp GNUmakefile
 	mkdir -p "$$(dirname $@)"
-	$(KCXX) $(KCXXFLAGS) $(KCPPFLAGS) -c $< -o $@
+	$(KCXX) $(KCXXFLAGS) $(KCPPFLAGS_CXX) -c $< -o $@
 
 # Compilation rules for *.S files.
 obj-$(KARCH)/%.S.o: src/%.S GNUmakefile
@@ -237,7 +242,7 @@ clean:
 # Remove everything built and generated including downloaded dependencies.
 .PHONY: distclean
 distclean:
-	rm -rf bin-* obj-* freestnd-cxx-hdrs src/cc-runtime.c src/limine.h
+	rm -rf bin-* obj-* freestnd-c-hdrs freestnd-cxx-hdrs src/cc-runtime.c src/limine.h
 
 # Install the final built executable to its final on-root location.
 .PHONY: install
