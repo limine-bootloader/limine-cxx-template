@@ -70,17 +70,21 @@ override SHARED_FLAGS := \
     -fdata-sections
 
 # Internal C/C++ preprocessor flags that should not be changed by the user.
-override KCPPFLAGS := \
+override KCPPFLAGS_C := \
     -I src \
-    $(KCPPFLAGS) \
     -isystem freestnd-c-hdrs/$(KARCH)/include \
+    $(KCPPFLAGS) \
     -MMD \
     -MP
 
 # Internal C++ only preprocessor flags.
 override KCPPFLAGS_CXX := \
-	$(KCPPFLAGS) \
-	-isystem freestnd-cxx-hdrs/$(KARCH)/include
+    -I src \
+    -isystem freestnd-c-hdrs/$(KARCH)/include \
+    -isystem freestnd-cxx-hdrs/$(KARCH)/include \
+    $(KCPPFLAGS) \
+    -MMD \
+    -MP
 
 ifeq ($(KARCH),x86_64)
     # Internal nasm flags that should not be changed by the user.
@@ -222,7 +226,7 @@ bin-$(KARCH)/$(OUTPUT): GNUmakefile linker-$(KARCH).ld $(OBJ)
 # Compilation rules for *.c files.
 obj-$(KARCH)/%.c.o: src/%.c GNUmakefile
 	mkdir -p "$$(dirname $@)"
-	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
+	$(KCC) $(KCFLAGS) $(KCPPFLAGS_C) -c $< -o $@
 
 # Compilation rules for *.cpp files.
 obj-$(KARCH)/%.cpp.o: src/%.cpp GNUmakefile
@@ -232,7 +236,7 @@ obj-$(KARCH)/%.cpp.o: src/%.cpp GNUmakefile
 # Compilation rules for *.S files.
 obj-$(KARCH)/%.S.o: src/%.S GNUmakefile
 	mkdir -p "$$(dirname $@)"
-	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
+	$(KCC) $(KCFLAGS) $(KCPPFLAGS_C) -c $< -o $@
 
 ifeq ($(KARCH),x86_64)
 # Compilation rules for *.asm (nasm) files.
