@@ -2,7 +2,7 @@
 /.cache
 /freestnd-c-hdrs
 /freestnd-cxx-hdrs
-/src/cc-runtime
+/cc-runtime
 /src/limine.h
 /bin-*
 /obj-*
