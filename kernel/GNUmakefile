@@ -23,6 +23,9 @@ CC := cc
 # User controllable C++ compiler command.
 CXX := c++
 
+# User controllable linker command.
+LD := ld
+
 # User controllable C flags.
 CFLAGS := -g -O2 -pipe
 
@@ -61,6 +64,7 @@ override SHARED_FLAGS := \
     -ffreestanding \
     -fno-stack-protector \
     -fno-stack-check \
+    -fno-lto \
     -fno-PIC \
     -ffunction-sections \
     -fdata-sections
@@ -110,7 +114,7 @@ ifeq ($(ARCH),x86_64)
         -mno-red-zone \
         -mcmodel=kernel
     override LDFLAGS += \
-        -Wl,-m,elf_x86_64
+        -m elf_x86_64
     override NASMFLAGS += \
         -f elf64
 endif
@@ -126,7 +130,7 @@ ifeq ($(ARCH),aarch64)
     override SHARED_FLAGS += \
         -mgeneral-regs-only
     override LDFLAGS += \
-        -Wl,-m,aarch64elf
+        -m aarch64elf
 endif
 ifeq ($(ARCH),riscv64)
     ifeq ($(CC_IS_CLANG),1)
@@ -151,8 +155,8 @@ ifeq ($(ARCH),riscv64)
         -mabi=lp64 \
         -mno-relax
     override LDFLAGS += \
-        -Wl,-m,elf64lriscv \
-        -Wl,--no-relax
+        -m elf64lriscv \
+        --no-relax
 endif
 ifeq ($(ARCH),loongarch64)
     ifeq ($(CC_IS_CLANG),1)
@@ -167,8 +171,8 @@ ifeq ($(ARCH),loongarch64)
         -march=loongarch64 \
         -mabi=lp64s
     override LDFLAGS += \
-        -Wl,-m,elf64loongarch \
-        -Wl,--no-relax
+        -m elf64loongarch \
+        --no-relax
 endif
 
 # Internal C flags that should not be changed by the user.
@@ -185,11 +189,10 @@ override CXXFLAGS += \
 
 # Internal linker flags that should not be changed by the user.
 override LDFLAGS += \
-    -Wl,--build-id=none \
     -nostdlib \
     -static \
     -z max-page-size=0x1000 \
-    -Wl,--gc-sections \
+    -gc-sections \
     -T linker-$(ARCH).ld
 
 # Use "find" to glob all *.c, *.cpp, *.S, and *.asm files in the tree and obtain the
@@ -217,7 +220,7 @@ all: bin-$(ARCH)/$(OUTPUT)
 # Link rules for the final executable.
 bin-$(ARCH)/$(OUTPUT): GNUmakefile linker-$(ARCH).ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $@
+	$(LD) $(OBJ) $(LDFLAGS) -o $@
 
 # Compilation rules for *.c files.
 obj-$(ARCH)/%.c.o: %.c GNUmakefile
