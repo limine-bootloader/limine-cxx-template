@@ -11,19 +11,19 @@ clone_repo_commit() {
     if test -d "$2/.git"; then
         git -C "$2" reset --hard
         git -C "$2" clean -fd
-        if ! git -C "$2" checkout $3; then
+        if ! git -C "$2" -c advice.detachedHead=false checkout $3; then
             rm -rf "$2"
         fi
     else
         if test -d "$2"; then
             set +x
-            echo "error: '$2' is not a Git repository"
+            echo "error: '$2' is not a Git repository" 1>&2
             exit 1
         fi
     fi
     if ! test -d "$2"; then
         git clone $1 "$2"
-        if ! git -C "$2" checkout $3; then
+        if ! git -C "$2" -c advice.detachedHead=false checkout $3; then
             rm -rf "$2"
             exit 1
         fi
@@ -36,7 +36,7 @@ download_by_hash() {
         DOWNLOAD_COMMAND="wget -O"
         if ! command -v "${DOWNLOAD_COMMAND%% *}" >/dev/null 2>&1; then
             set +x
-            echo "error: Neither curl nor wget found"
+            echo "error: Neither curl nor wget found" 1>&2
             exit 1
         fi
     fi
@@ -45,7 +45,7 @@ download_by_hash() {
         SHA256_COMMAND="sha256"
         if ! command -v "${SHA256_COMMAND%% *}" >/dev/null 2>&1; then
             set +x
-            echo "error: Cannot find sha256(sum) command"
+            echo "error: Cannot find sha256(sum) command" 1>&2
             exit 1
         fi
     fi
@@ -55,9 +55,9 @@ download_by_hash() {
         $DOWNLOAD_COMMAND "$2" $1
         if ! $SHA256_COMMAND "$2" | grep $3 >/dev/null 2>&1; then
             set +x
-            echo "error: Cannot download file '$2' by hash"
-            echo "incorrect hash:"
-            $SHA256_COMMAND "$2"
+            echo "error: Cannot download file '$2' by hash" 1>&2
+            echo "incorrect hash:" 1>&2
+            $SHA256_COMMAND "$2" 1>&2
             rm -f "$2"
             exit 1
         fi
@@ -83,3 +83,7 @@ download_by_hash \
     https://github.com/limine-bootloader/limine/raw/4687a182be23939c2d9f15db970382dc353ed956/limine.h \
     src/limine.h \
     6879e626f34c1be25ac2f72bf43b083fc2b53887280bb0fcdaee790e258c6974
+
+set +x
+
+printf "\nDependencies obtained successfully!\n"
