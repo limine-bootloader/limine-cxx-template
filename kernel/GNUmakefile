@@ -115,8 +115,9 @@ ifeq ($(ARCH),x86_64)
         -mcmodel=kernel
     override LDFLAGS += \
         -m elf_x86_64
-    override NASMFLAGS += \
-        -f elf64
+    override NASMFLAGS := \
+        -f elf64 \
+        $(NASMFLAGS)
 endif
 ifeq ($(ARCH),aarch64)
     ifeq ($(CC_IS_CLANG),1)
