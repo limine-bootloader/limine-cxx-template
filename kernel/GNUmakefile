@@ -17,14 +17,34 @@ ifeq ($(filter $(ARCH),aarch64 loongarch64 riscv64 x86_64),)
     $(error Architecture $(ARCH) not supported)
 endif
 
+# User controllable toolchain and toolchain prefix.
+TOOLCHAIN :=
+TOOLCHAIN_PREFIX :=
+ifneq ($(TOOLCHAIN),)
+    ifeq ($(TOOLCHAIN_PREFIX),)
+        TOOLCHAIN_PREFIX := $(TOOLCHAIN)-
+    endif
+endif
+
 # User controllable C compiler command.
-CC := cc
+ifneq ($(TOOLCHAIN_PREFIX),)
+    CC := $(TOOLCHAIN_PREFIX)gcc
+else
+    CC := cc
+endif
 
 # User controllable C++ compiler command.
-CXX := c++
+CXX := $(TOOLCHAIN_PREFIX)c++
 
 # User controllable linker command.
-LD := ld
+LD := $(TOOLCHAIN_PREFIX)ld
+
+# Defaults overrides for variables if using "llvm" as toolchain.
+ifeq ($(TOOLCHAIN),llvm)
+    CC := clang
+    CXX := clang++
+    LD := ld.lld
+endif
 
 # User controllable C flags.
 CFLAGS := -g -O2 -pipe

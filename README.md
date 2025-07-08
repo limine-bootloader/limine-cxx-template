@@ -12,6 +12,19 @@ It is recommended to build this project using a standard UNIX-like system, using
 
 Additionally, building an ISO with `make all` requires `xorriso`, and building a HDD/USB image with `make all-hdd` requires `sgdisk` (usually from `gdisk` or `gptfdisk` packages) and `mtools`.
 
+### Toolchain selection
+
+The `TOOLCHAIN` and `TOOLCHAIN_PREFIX` `make` variables can be used to set the toolchain. `TOOLCHAIN` can be set to `llvm` to use Clang/LLVM.
+
+For example:
+```
+make TOOLCHAIN=llvm
+```
+or:
+```
+make TOOLCHAIN_PREFIX=x86_64-elf-
+```
+
 ### Architectural targets
 
 The `ARCH` make variable determines the target architecture to build the kernel and image for.
