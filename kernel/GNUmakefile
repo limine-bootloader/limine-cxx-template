@@ -71,10 +71,10 @@ ifneq ($(shell ( test '$(MAKECMDGOALS)' = clean || test '$(MAKECMDGOALS)' = dist
 endif
 
 # Check if CC is Clang.
-override CC_IS_CLANG := $(shell ! $(CC) --version 2>/dev/null | grep '^Target:' >/dev/null 2>&1; echo $$?)
+override CC_IS_CLANG := $(shell ! $(CC) --version 2>/dev/null | grep -q '^Target: '; echo $$?)
 
 # Check if CXX is Clang.
-override CXX_IS_CLANG := $(shell ! $(CXX) --version 2>/dev/null | grep '^Target:' >/dev/null 2>&1; echo $$?)
+override CXX_IS_CLANG := $(shell ! $(CXX) --version 2>/dev/null | grep -q '^Target: '; echo $$?)
 
 # Internal flags shared by both C and C++ compilers.
 override SHARED_FLAGS := \
