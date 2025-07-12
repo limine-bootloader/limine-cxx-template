@@ -3,6 +3,6 @@
 /freestnd-c-hdrs
 /freestnd-cxx-hdrs
 /cc-runtime
-/src/limine.h
+/limine-protocol
 /bin-*
 /obj-*

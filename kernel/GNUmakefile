@@ -65,7 +65,7 @@ LDFLAGS :=
 
 # Ensure the dependencies have been obtained.
 ifneq ($(shell ( test '$(MAKECMDGOALS)' = clean || test '$(MAKECMDGOALS)' = distclean ); echo $$?),0)
-    ifeq ($(shell ( ! test -d freestnd-c-hdrs || ! test -d freestnd-cxx-hdrs || ! test -d cc-runtime || ! test -f src/limine.h ); echo $$?),0)
+    ifeq ($(shell ( ! test -d freestnd-c-hdrs || ! test -d freestnd-cxx-hdrs || ! test -d cc-runtime || ! test -d limine-protocol ); echo $$?),0)
         $(error Please run the ./get-deps script first)
     endif
 endif
@@ -92,6 +92,7 @@ override SHARED_FLAGS := \
 # Internal C/C++ preprocessor flags that should not be changed by the user.
 override CPPFLAGS_C := \
     -I src \
+    -I limine-protocol/include \
     -isystem freestnd-c-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
     -DLIMINE_API_REVISION=3 \
@@ -273,7 +274,7 @@ clean:
 # Remove everything built and generated including downloaded dependencies.
 .PHONY: distclean
 distclean:
-	rm -rf bin-* obj-* freestnd-c-hdrs freestnd-cxx-hdrs cc-runtime src/limine.h
+	rm -rf bin-* obj-* freestnd-c-hdrs freestnd-cxx-hdrs cc-runtime limine-protocol
 
 # Install the final built executable to its final on-root location.
 .PHONY: install
