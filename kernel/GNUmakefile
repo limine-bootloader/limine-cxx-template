@@ -97,13 +97,8 @@ override CPPFLAGS_C := \
 
 # Internal C++ only preprocessor flags.
 override CPPFLAGS_CXX := \
-    -I src \
-    -isystem freestnd-c-hdrs/$(ARCH)/include \
-    -isystem freestnd-cxx-hdrs/$(ARCH)/include \
-    $(CPPFLAGS) \
-    -DLIMINE_API_REVISION=3 \
-    -MMD \
-    -MP
+    $(CPPFLAGS_C) \
+    -isystem freestnd-cxx-hdrs/$(ARCH)/include
 
 ifeq ($(ARCH),x86_64)
     # Internal nasm flags that should not be changed by the user.
