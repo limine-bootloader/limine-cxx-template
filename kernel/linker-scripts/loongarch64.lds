@@ -44,6 +44,10 @@ SECTIONS
         *(.rodata .rodata.*)
     } :rodata
 
+    .note.gnu.build-id : {
+        *(.note.gnu.build-id)
+    } :rodata
+
     /* C++ is a language that allows for global constructors. In order to obtain the */
     /* address of the ".init_array" section we need to define a symbol for it. */
     .init_array : {
