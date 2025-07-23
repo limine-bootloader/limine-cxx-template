@@ -36,6 +36,16 @@ endif
 # User controllable C++ compiler command.
 CXX := $(TOOLCHAIN_PREFIX)c++
 
+# User controllable linker command.
+LD := $(TOOLCHAIN_PREFIX)ld
+
+# Defaults overrides for variables if using "llvm" as toolchain.
+ifeq ($(TOOLCHAIN),llvm)
+    CC := clang
+    CXX := clang++
+    LD := ld.lld
+endif
+
 # User controllable C flags.
 CFLAGS := -g -O2 -pipe
 
@@ -52,13 +62,6 @@ endif
 
 # User controllable linker flags. We set none by default.
 LDFLAGS :=
-
-# Defaults overrides for variables if using "llvm" as toolchain.
-ifeq ($(TOOLCHAIN),llvm)
-    CC := clang
-    CXX := clang++
-    override LDFLAGS := -fuse-ld=lld $(LDFLAGS)
-endif
 
 # Ensure the dependencies have been obtained.
 ifneq ($(shell ( test '$(MAKECMDGOALS)' = clean || test '$(MAKECMDGOALS)' = distclean ); echo $$?),0)
@@ -126,7 +129,7 @@ ifeq ($(ARCH),x86_64)
         -mno-red-zone \
         -mcmodel=kernel
     override LDFLAGS += \
-        -Wl,-m,elf_x86_64
+        -m elf_x86_64
     override NASMFLAGS := \
         -f elf64 \
         $(NASMFLAGS)
@@ -143,7 +146,7 @@ ifeq ($(ARCH),aarch64)
     override SHARED_FLAGS += \
         -mgeneral-regs-only
     override LDFLAGS += \
-        -Wl,-m,aarch64elf
+        -m aarch64elf
 endif
 ifeq ($(ARCH),riscv64)
     ifeq ($(CC_IS_CLANG),1)
@@ -168,8 +171,8 @@ ifeq ($(ARCH),riscv64)
         -mabi=lp64 \
         -mno-relax
     override LDFLAGS += \
-        -Wl,-m,elf64lriscv \
-        -Wl,--no-relax
+        -m elf64lriscv \
+        --no-relax
 endif
 ifeq ($(ARCH),loongarch64)
     ifeq ($(CC_IS_CLANG),1)
@@ -184,8 +187,8 @@ ifeq ($(ARCH),loongarch64)
         -march=loongarch64 \
         -mabi=lp64s
     override LDFLAGS += \
-        -Wl,-m,elf64loongarch \
-        -Wl,--no-relax
+        -m elf64loongarch \
+        --no-relax
 endif
 
 # Internal C flags that should not be changed by the user.
@@ -202,12 +205,11 @@ override CXXFLAGS += \
 
 # Internal linker flags that should not be changed by the user.
 override LDFLAGS += \
-    -static \
     -nostdlib \
-    -Wl,-nostdlib \
-    -Wl,-z,max-page-size=0x1000 \
-    -Wl,--gc-sections \
-    -Wl,-T,linker-scripts/$(ARCH).lds
+    -static \
+    -z max-page-size=0x1000 \
+    --gc-sections \
+    -T linker-scripts/$(ARCH).lds
 
 # Use "find" to glob all *.c, *.cpp, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
@@ -234,7 +236,7 @@ all: bin-$(ARCH)/$(OUTPUT)
 # Link rules for the final executable.
 bin-$(ARCH)/$(OUTPUT): GNUmakefile linker-scripts/$(ARCH).lds $(OBJ)
 	mkdir -p "$$(dirname $@)"
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $@
+	$(LD) $(OBJ) $(LDFLAGS) -o $@
 
 # Compilation rules for *.c files.
 obj-$(ARCH)/%.c.o: %.c GNUmakefile
