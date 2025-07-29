@@ -84,6 +84,7 @@ override SHARED_FLAGS := \
     -ffreestanding \
     -fno-stack-protector \
     -fno-stack-check \
+    -fno-lto \
     -fno-PIC \
     -ffunction-sections \
     -fdata-sections
