@@ -1,5 +1,4 @@
-# Nuke built-in rules and variables.
-MAKEFLAGS += -rR
+# Nuke built-in rules.
 .SUFFIXES:
 
 # This is the name that our final executable will have.

@@ -1,5 +1,4 @@
-# Nuke built-in rules and variables.
-MAKEFLAGS += -rR
+# Nuke built-in rules.
 .SUFFIXES:
 
 # Target architecture to build for. Default to x86_64.
