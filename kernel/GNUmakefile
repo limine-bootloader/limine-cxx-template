@@ -242,28 +242,28 @@ all: bin-$(ARCH)/$(OUTPUT)
 
 # Link rules for the final executable.
 bin-$(ARCH)/$(OUTPUT): GNUmakefile linker-scripts/$(ARCH).lds $(OBJ)
-	mkdir -p "$$(dirname $@)"
+	mkdir -p "$(dir $@)"
 	$(LD) $(OBJ) $(LDFLAGS) -o $@
 
 # Compilation rules for *.c files.
 obj-$(ARCH)/%.c.o: %.c GNUmakefile
-	mkdir -p "$$(dirname $@)"
+	mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) $(CPPFLAGS_C) -c $< -o $@
 
 # Compilation rules for *.cpp files.
 obj-$(ARCH)/%.cpp.o: %.cpp GNUmakefile
-	mkdir -p "$$(dirname $@)"
+	mkdir -p "$(dir $@)"
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS_CXX) -c $< -o $@
 
 # Compilation rules for *.S files.
 obj-$(ARCH)/%.S.o: %.S GNUmakefile
-	mkdir -p "$$(dirname $@)"
+	mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) $(CPPFLAGS_C) -c $< -o $@
 
 ifeq ($(ARCH),x86_64)
 # Compilation rules for *.asm (nasm) files.
 obj-$(ARCH)/%.asm.o: %.asm GNUmakefile
-	mkdir -p "$$(dirname $@)"
+	mkdir -p "$(dir $@)"
 	nasm $(NASMFLAGS) $< -o $@
 endif
 
