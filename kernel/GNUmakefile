@@ -243,7 +243,7 @@ all: bin-$(ARCH)/$(OUTPUT)
 # Link rules for the final executable.
 bin-$(ARCH)/$(OUTPUT): GNUmakefile linker-scripts/$(ARCH).lds $(OBJ)
 	mkdir -p "$(dir $@)"
-	$(LD) $(OBJ) $(LDFLAGS) -o $@
+	$(LD) $(LDFLAGS) $(OBJ) -o $@
 
 # Compilation rules for *.c files.
 obj-$(ARCH)/%.c.o: %.c GNUmakefile
