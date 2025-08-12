@@ -218,9 +218,13 @@ override LDFLAGS += \
     --gc-sections \
     -T linker-scripts/$(ARCH).lds
 
-# Use "find" to glob all *.c, *.cpp, *.S, and *.asm files in the tree and obtain the
-# object and header dependency file names.
-override SRCFILES := $(shell find -L src cc-runtime/src -type f 2>/dev/null | LC_ALL=C sort)
+# Use "find" to glob all *.c, *.cpp, *.S, and *.asm files in the tree
+# (except the src/arch/* directories, as those are gonna be added
+# in the next step).
+override SRCFILES := $(shell find -L src cc-runtime/src -type f -not -path 'src/arch/*' 2>/dev/null | LC_ALL=C sort)
+# Add architecture specific files, if they exist.
+override SRCFILES += $(shell find -L src/arch/$(ARCH) -type f 2>/dev/null | LC_ALL=C sort)
+# Obtain the object and header dependencies file names.
 override CFILES := $(filter %.c,$(SRCFILES))
 override CXXFILES := $(filter %.cpp,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
