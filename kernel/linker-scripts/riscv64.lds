@@ -42,6 +42,8 @@ SECTIONS
 
     .rodata : {
         *(.rodata .rodata.*)
+        *(.srodata .srodata.*)
+        *(.sdata2 .sdata2.*)
     } :rodata
 
     /* Add a .note.gnu.build-id output section in case a build ID flag is added to the */
@@ -72,8 +74,8 @@ SECTIONS
     /* If you need, for example, .init_array and .fini_array, those should be placed */
     /* above this. */
     .bss : {
-        *(.sbss .sbss.*)
         *(.bss .bss.*)
+        *(.sbss .sbss.*)
         *(COMMON)
     } :data
 
