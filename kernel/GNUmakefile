@@ -191,11 +191,9 @@ ifeq ($(ARCH),loongarch64)
         -march=loongarch64 \
         -mabi=lp64s \
         -mfpu=none \
-        -msimd=none \
-        -mno-relax
+        -msimd=none
     override LDFLAGS += \
-        -m elf64loongarch \
-        --no-relax
+        -m elf64loongarch
 endif
 
 # Internal C flags that should not be changed by the user.
