@@ -63,8 +63,8 @@ endif
 LDFLAGS :=
 
 # Ensure the dependencies have been obtained.
-ifneq ($(shell ( test '$(MAKECMDGOALS)' = clean || test '$(MAKECMDGOALS)' = distclean ); echo $$?),0)
-    ifeq ($(shell ( ! test -d freestnd-c-hdrs || ! test -d freestnd-cxx-hdrs || ! test -d cc-runtime || ! test -d limine-protocol ); echo $$?),0)
+ifneq ($(filter-out clean distclean,$(MAKECMDGOALS)),)
+    ifeq ($(wildcard .deps-obtained),)
         $(error Please run the ./get-deps script first)
     endif
 endif
@@ -277,7 +277,7 @@ clean:
 # Remove everything built and generated including downloaded dependencies.
 .PHONY: distclean
 distclean:
-	rm -rf bin-* obj-* freestnd-c-hdrs freestnd-cxx-hdrs cc-runtime limine-protocol
+	rm -rf bin-* obj-* .deps-obtained freestnd-c-hdrs freestnd-cxx-hdrs cc-runtime limine-protocol
 
 # Install the final built executable to its final on-root location.
 .PHONY: install

@@ -1,6 +1,6 @@
 #! /bin/sh
 
-set -ex
+set -e
 
 srcdir="$(dirname "$0")"
 test -z "$srcdir" && srcdir=.
@@ -16,7 +16,6 @@ clone_repo_commit() {
         fi
     else
         if test -d "$2"; then
-            set +x
             echo "error: '$2' is not a Git repository" 1>&2
             exit 1
         fi
@@ -29,6 +28,8 @@ clone_repo_commit() {
         fi
     fi
 }
+
+rm -f .deps-obtained
 
 clone_repo_commit \
     https://github.com/osdev0/freestnd-c-hdrs.git \
@@ -50,6 +51,6 @@ clone_repo_commit \
     limine-protocol \
     fedf97facd1c473ee8720f8dfd5a71d03490d928
 
-set +x
+touch .deps-obtained
 
-printf "\nDependencies obtained successfully!\n"
+printf "\nDependencies obtained successfully.\n"
