@@ -32,22 +32,22 @@ clone_repo_commit() {
 rm -f .deps-obtained
 
 clone_repo_commit \
-    https://github.com/osdev0/freestnd-c-hdrs.git \
+    https://codeberg.org/OSDev/freestnd-c-hdrs.git \
     freestnd-c-hdrs \
     4039f438fb1dc1064d8e98f70e1cf122f91b763b
 
 clone_repo_commit \
-    https://github.com/osdev0/freestnd-cxx-hdrs.git \
+    https://codeberg.org/OSDev/freestnd-cxx-hdrs.git \
     freestnd-cxx-hdrs \
     85096df5361a4d7ef2ce46947e555ec248c2858e
 
 clone_repo_commit \
-    https://github.com/osdev0/cc-runtime.git \
+    https://codeberg.org/OSDev/cc-runtime.git \
     cc-runtime \
     dae79833b57a01b9fd3e359ee31def69f5ae899b
 
 clone_repo_commit \
-    https://github.com/limine-bootloader/limine-protocol.git \
+    https://codeberg.org/Limine/limine-protocol.git \
     limine-protocol \
     fedf97facd1c473ee8720f8dfd5a71d03490d928
 
