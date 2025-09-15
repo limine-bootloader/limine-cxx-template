@@ -148,7 +148,7 @@ ovmf/ovmf-code-$(ARCH).fd:
 
 limine/limine:
 	rm -rf limine
-	git clone https://codeberg.org/Limine/Limine.git limine --branch=v9.x-binary --depth=1
+	git clone https://codeberg.org/Limine/Limine.git limine --branch=v10.x-binary --depth=1
 	$(MAKE) -C limine \
 		CC="$(HOST_CC)" \
 		CFLAGS="$(HOST_CFLAGS)" \
