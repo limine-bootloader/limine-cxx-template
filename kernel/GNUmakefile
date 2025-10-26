@@ -156,22 +156,13 @@ ifeq ($(ARCH),riscv64)
     ifeq ($(CC_IS_CLANG),1)
         override CC += \
             -target riscv64-unknown-none-elf
-        override CFLAGS += \
-            -march=rv64imac
-    else
-        override CFLAGS += \
-            -march=rv64imac_zicsr_zifencei
     endif
     ifeq ($(CXX_IS_CLANG),1)
         override CXX += \
             -target riscv64-unknown-none-elf
-        override CXXFLAGS += \
-            -march=rv64imac
-    else
-        override CXXFLAGS += \
-            -march=rv64imac_zicsr_zifencei
     endif
     override SHARED_FLAGS += \
+        -march=rv64imac_zicsr_zifencei \
         -mabi=lp64 \
         -mno-relax
     override LDFLAGS += \
