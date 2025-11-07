@@ -9,7 +9,7 @@
 namespace {
 
 __attribute__((used, section(".limine_requests")))
-volatile LIMINE_BASE_REVISION(4);
+volatile std::uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(4);
 
 }
 
@@ -22,7 +22,7 @@ namespace {
 
 __attribute__((used, section(".limine_requests")))
 volatile limine_framebuffer_request framebuffer_request = {
-    .id = LIMINE_FRAMEBUFFER_REQUEST,
+    .id = LIMINE_FRAMEBUFFER_REQUEST_ID,
     .revision = 0,
     .response = nullptr
 };
@@ -35,10 +35,10 @@ volatile limine_framebuffer_request framebuffer_request = {
 namespace {
 
 __attribute__((used, section(".limine_requests_start")))
-volatile LIMINE_REQUESTS_START_MARKER;
+volatile std::uint64_t limine_requests_start_marker[] = LIMINE_REQUESTS_START_MARKER;
 
 __attribute__((used, section(".limine_requests_end")))
-volatile LIMINE_REQUESTS_END_MARKER;
+volatile std::uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARKER;
 
 }
 
@@ -139,7 +139,7 @@ extern void (*__init_array_end[])();
 // linker script accordingly.
 extern "C" void kmain() {
     // Ensure the bootloader actually understands our base revision (see spec).
-    if (LIMINE_BASE_REVISION_SUPPORTED == false) {
+    if (LIMINE_BASE_REVISION_SUPPORTED(limine_base_revision) == false) {
         hcf();
     }
 
