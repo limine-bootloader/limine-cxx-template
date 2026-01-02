@@ -241,4 +241,4 @@ clean:
 .PHONY: distclean
 distclean:
 	$(MAKE) -C kernel distclean
-	rm -rf iso_root *.iso *.hdd kernel-deps limine edk2-ovmf
+	rm -rf iso_root *.iso *.hdd limine edk2-ovmf
