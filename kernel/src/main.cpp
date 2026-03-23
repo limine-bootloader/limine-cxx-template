@@ -2,14 +2,14 @@
 #include <cstddef>
 #include <limine.h>
 
-// Set the base revision to 5, this is recommended as this is the latest
+// Set the base revision to 6, this is recommended as this is the latest
 // base revision described by the Limine boot protocol specification.
 // See specification for further info.
 
 namespace {
 
 __attribute__((used, section(".limine_requests")))
-volatile std::uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(5);
+volatile std::uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(6);
 
 }
 
