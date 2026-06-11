@@ -92,7 +92,7 @@ override SHARED_FLAGS := \
 override CPPFLAGS_C := \
     -I src \
     -I limine-protocol/include \
-    -isystem freestnd-c-hdrs/$(ARCH)/include \
+    -isystem freestanding-c-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
     -MMD \
     -MP
@@ -100,7 +100,7 @@ override CPPFLAGS_C := \
 # Internal C++ only preprocessor flags.
 override CPPFLAGS_CXX := \
     $(CPPFLAGS_C) \
-    -isystem freestnd-cxx-hdrs/$(ARCH)/include
+    -isystem freestanding-cxx-hdrs/$(ARCH)/include
 
 ifeq ($(ARCH),x86_64)
     # Internal nasm flags that should not be changed by the user.
@@ -267,7 +267,7 @@ clean:
 # Remove everything built and generated including downloaded dependencies.
 .PHONY: distclean
 distclean:
-	rm -rf bin-* obj-* .deps-obtained .cache compile_commands.json freestnd-c-hdrs freestnd-cxx-hdrs cc-runtime limine-protocol
+	rm -rf bin-* obj-* .deps-obtained .cache compile_commands.json freestanding-c-hdrs freestanding-cxx-hdrs cc-runtime limine-protocol
 
 # Install the final built executable to its final on-root location.
 .PHONY: install

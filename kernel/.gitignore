@@ -1,8 +1,8 @@
 /compile_commands.json
 /.cache
 /.deps-obtained
-/freestnd-c-hdrs
-/freestnd-cxx-hdrs
+/freestanding-c-hdrs
+/freestanding-cxx-hdrs
 /cc-runtime
 /limine-protocol
 /bin-*

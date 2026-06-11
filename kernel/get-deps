@@ -32,14 +32,14 @@ clone_repo_commit() {
 rm -f .deps-obtained
 
 clone_repo_commit \
-    https://github.com/osdev0/freestnd-c-hdrs.git \
-    freestnd-c-hdrs \
-    5e11c3da645d8f203e93dc23703b14a15c5b7afc
+    https://github.com/osdev0/freestanding-c-hdrs-gnu.git \
+    freestanding-c-hdrs \
+    7082a7596238932f20cf0013e8448f74b53e814c
 
 clone_repo_commit \
-    https://github.com/osdev0/freestnd-cxx-hdrs.git \
-    freestnd-cxx-hdrs \
-    9d6a92ab19a57140f1e3ecc6668014d7f46094b6
+    https://github.com/osdev0/freestanding-cxx-hdrs-gnu.git \
+    freestanding-cxx-hdrs \
+    b1bcadde902e340c331c6c637e31289e86d28384
 
 clone_repo_commit \
     https://github.com/osdev0/cc-runtime.git \
