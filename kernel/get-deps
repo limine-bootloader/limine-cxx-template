@@ -34,12 +34,12 @@ rm -f .deps-obtained
 clone_repo_commit \
     https://github.com/osdev0/freestanding-c-hdrs-gnu.git \
     freestanding-c-hdrs \
-    7082a7596238932f20cf0013e8448f74b53e814c
+    cdd9b3cc11808d3259c082a77c33dfeb0f040adc
 
 clone_repo_commit \
     https://github.com/osdev0/freestanding-cxx-hdrs-gnu.git \
     freestanding-cxx-hdrs \
-    b1bcadde902e340c331c6c637e31289e86d28384
+    6fc33d66b123874631cf27bc9ab80a9ab3a43dd5
 
 clone_repo_commit \
     https://github.com/osdev0/cc-runtime.git \
