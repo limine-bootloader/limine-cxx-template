@@ -147,6 +147,7 @@ ifeq ($(ARCH),aarch64)
     override SHARED_FLAGS += \
         -mcpu=generic \
         -march=armv8-a+nofp+nosimd \
+        -mno-outline-atomics \
         -mgeneral-regs-only
     override LDFLAGS += \
         -m aarch64elf
