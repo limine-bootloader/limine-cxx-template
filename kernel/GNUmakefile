@@ -113,16 +113,18 @@ ifeq ($(ARCH),x86_64)
         -Wall
 endif
 
+# Make Clang target the freestanding ELF triple of the architecture.
+ifeq ($(CC_IS_CLANG),1)
+    override CC += \
+        -target $(ARCH)-unknown-none-elf
+endif
+ifeq ($(CXX_IS_CLANG),1)
+    override CXX += \
+        -target $(ARCH)-unknown-none-elf
+endif
+
 # Architecture specific internal flags.
 ifeq ($(ARCH),x86_64)
-    ifeq ($(CC_IS_CLANG),1)
-        override CC += \
-            -target x86_64-unknown-none-elf
-    endif
-    ifeq ($(CXX_IS_CLANG),1)
-        override CXX += \
-            -target x86_64-unknown-none-elf
-    endif
     override SHARED_FLAGS += \
         -m64 \
         -march=x86-64 \
@@ -140,14 +142,6 @@ ifeq ($(ARCH),x86_64)
         $(NASMFLAGS)
 endif
 ifeq ($(ARCH),aarch64)
-    ifeq ($(CC_IS_CLANG),1)
-        override CC += \
-            -target aarch64-unknown-none-elf
-    endif
-    ifeq ($(CXX_IS_CLANG),1)
-        override CXX += \
-            -target aarch64-unknown-none-elf
-    endif
     override SHARED_FLAGS += \
         -mcpu=generic \
         -march=armv8-a+nofp+nosimd \
@@ -157,14 +151,6 @@ ifeq ($(ARCH),aarch64)
         -m aarch64elf
 endif
 ifeq ($(ARCH),riscv64)
-    ifeq ($(CC_IS_CLANG),1)
-        override CC += \
-            -target riscv64-unknown-none-elf
-    endif
-    ifeq ($(CXX_IS_CLANG),1)
-        override CXX += \
-            -target riscv64-unknown-none-elf
-    endif
     override SHARED_FLAGS += \
         -march=rv64imac_zicsr_zifencei \
         -mabi=lp64 \
@@ -174,14 +160,6 @@ ifeq ($(ARCH),riscv64)
         --no-relax
 endif
 ifeq ($(ARCH),loongarch64)
-    ifeq ($(CC_IS_CLANG),1)
-        override CC += \
-            -target loongarch64-unknown-none-elf
-    endif
-    ifeq ($(CXX_IS_CLANG),1)
-        override CXX += \
-            -target loongarch64-unknown-none-elf
-    endif
     override SHARED_FLAGS += \
         -march=loongarch64 \
         -mabi=lp64s \
