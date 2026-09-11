@@ -236,6 +236,9 @@ ifeq ($(ARCH),x86_64)
 override OBJ += $(addprefix obj-$(ARCH)/,$(NASMFILES:.asm=.asm.o))
 endif
 override HEADER_DEPS := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.cpp=.cpp.d) $(ASFILES:.S=.S.d))
+ifeq ($(ARCH),x86_64)
+override HEADER_DEPS += $(addprefix obj-$(ARCH)/,$(NASMFILES:.asm=.asm.d))
+endif
 
 # Default target. This must come first, before header dependencies.
 .PHONY: all
@@ -268,7 +271,7 @@ ifeq ($(ARCH),x86_64)
 # Compilation rules for *.asm (nasm) files.
 obj-$(ARCH)/%.asm.o: %.asm GNUmakefile
 	mkdir -p "$(dir $@)"
-	nasm $(NASMFLAGS) $< -o $@
+	nasm $(NASMFLAGS) -MD $(@:.o=.d) -MP $< -o $@
 endif
 
 # Remove object files and the final executable.
