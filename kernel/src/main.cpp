@@ -66,6 +66,7 @@ void hcf() {
 extern "C" {
     int __cxa_atexit(void (*)(void *), void *, void *) { return 0; }
     void __cxa_pure_virtual() { hcf(); }
+    void __cxa_deleted_virtual() { hcf(); }
     void *__dso_handle;
 }
 
