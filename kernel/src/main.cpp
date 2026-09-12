@@ -42,20 +42,10 @@ volatile std::uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARKER
 
 }
 
-// Halt and catch fire function.
+// Halt and catch fire function, defined below.
 namespace {
 
-void hcf() {
-    for (;;) {
-#if defined (__x86_64__)
-        asm ("hlt");
-#elif defined (__aarch64__) || defined (__riscv)
-        asm ("wfi");
-#elif defined (__loongarch64)
-        asm ("idle 0");
-#endif
-    }
-}
+void hcf();
 
 }
 
@@ -77,6 +67,50 @@ extern "C" {
 extern void (*__init_array[])();
 extern void (*__init_array_end[])();
 
+// Halt and catch fire function.
+namespace {
+
+void hcf() {
+    for (;;) {
+#if defined (__x86_64__)
+        asm ("hlt");
+#elif defined (__aarch64__) || defined (__riscv)
+        asm ("wfi");
+#elif defined (__loongarch64)
+        asm ("idle 0");
+#endif
+    }
+}
+
+// Scale an 8-bit colour channel value to the size the framebuffer gives the
+// channel and move it into place within a pixel.
+std::uint32_t fb_channel(std::uint8_t value, std::uint8_t mask_size, std::uint8_t mask_shift) {
+    std::uint64_t max = (std::uint64_t{1} << mask_size) - 1;
+    return static_cast<std::uint32_t>((value * max / 255) << mask_shift);
+}
+
+// Build a pixel from 8-bit red, green and blue values following the channel
+// layout of the framebuffer.
+std::uint32_t fb_pixel(limine_framebuffer *fb, std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
+    return fb_channel(red, fb->red_mask_size, fb->red_mask_shift)
+         | fb_channel(green, fb->green_mask_size, fb->green_mask_shift)
+         | fb_channel(blue, fb->blue_mask_size, fb->blue_mask_shift);
+}
+
+// Print a nice pattern to a framebuffer as an example.
+void fb_pattern(limine_framebuffer *fb) {
+    volatile std::uint32_t *fb_ptr = static_cast<volatile std::uint32_t *>(fb->address);
+    for (std::size_t y = 0; y < fb->height; y++) {
+        for (std::size_t x = 0; x < fb->width; x++) {
+            std::uint8_t nX = x * 255 / fb->width;
+            std::uint8_t nY = y * 255 / fb->height;
+            fb_ptr[y * (fb->pitch / 4) + x] = fb_pixel(fb, 0, nY, nX);
+        }
+    }
+}
+
+}
+
 // The following will be our kernel's entry point.
 // If renaming kmain() to something else, make sure to change the
 // linker script accordingly.
@@ -97,18 +131,16 @@ extern "C" void kmain() {
         hcf();
     }
 
-    // Fetch the first framebuffer.
-    limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
+    // Print the pattern to every framebuffer.
+    for (std::uint64_t i = 0; i < framebuffer_request.response->framebuffer_count; i++) {
+        limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[i];
 
-    // Print a nice pattern to screen as an example.
-    // Note: we assume the framebuffer model is RGB with 32-bit pixels.
-    volatile std::uint32_t *fb_ptr = static_cast<volatile std::uint32_t *>(framebuffer->address);
-    for (std::size_t y = 0; y < framebuffer->height; y++) {
-        for (std::size_t x = 0; x < framebuffer->width; x++) {
-            std::uint32_t nX = x * 255 / framebuffer->width;
-            std::uint32_t nY = y * 255 / framebuffer->height;
-            fb_ptr[y * (framebuffer->pitch / 4) + x] = (nY << 8) | nX;
+        // Ensure the framebuffer has 32-bit RGB pixels, the only kind we handle.
+        if (framebuffer->memory_model != LIMINE_FRAMEBUFFER_RGB || framebuffer->bpp != 32) {
+            hcf();
         }
+
+        fb_pattern(framebuffer);
     }
 
     // We're done, just hang...
