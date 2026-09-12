@@ -68,6 +68,9 @@ extern "C" {
     void __cxa_pure_virtual() { hcf(); }
     void __cxa_deleted_virtual() { hcf(); }
     void *__dso_handle;
+    // Not thread safe: replace before statics can be initialised concurrently.
+    int __cxa_guard_acquire(std::uint64_t *guard) { return *reinterpret_cast<std::uint8_t *>(guard) == 0; }
+    void __cxa_guard_release(std::uint64_t *guard) { *reinterpret_cast<std::uint8_t *>(guard) = 1; }
 }
 
 // Extern declarations for global constructors array.
