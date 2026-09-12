@@ -60,8 +60,8 @@ SECTIONS
     /* The section is writable, so it needs to be mapped to :data. */
     .init_array : {
         __init_array = .;
-        KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
-        KEEP(*(.init_array .ctors))
+        KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)))
+        KEEP(*(.init_array))
         __init_array_end = .;
     } :data
 
