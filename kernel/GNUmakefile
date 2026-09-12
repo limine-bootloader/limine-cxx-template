@@ -28,15 +28,14 @@ ifneq ($(TOOLCHAIN),)
     endif
 endif
 
-# User controllable C compiler command.
+# User controllable C and C++ compiler commands.
 ifneq ($(TOOLCHAIN_PREFIX),)
     CC := $(TOOLCHAIN_PREFIX)gcc
+    CXX := $(TOOLCHAIN_PREFIX)g++
 else
     CC := cc
+    CXX := c++
 endif
-
-# User controllable C++ compiler command.
-CXX := $(TOOLCHAIN_PREFIX)c++
 
 # User controllable linker command.
 LD := $(TOOLCHAIN_PREFIX)ld
